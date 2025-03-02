@@ -29,7 +29,7 @@ export async function POST(request: NextRequest) {
     }
     
     // Transform and add the posts
-    const posts = transformApifyData(data.data);
+    const posts = await transformApifyData(data.data);
     addPosts(posts);
     
     return NextResponse.json({ 
