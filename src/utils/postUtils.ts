@@ -109,81 +109,55 @@ export const addPosts = (newPosts: IPost[]): void => {
   }
 };
 
-// Map of brand-related keywords, usernames, and hashtags to official brand names
+// Update target brands to include all the brands we want to show
+const targetBrands = [
+  'Adidas', 'Nike', 'Lululemon', 'Google', 'Google Developers', 
+  'OpenAI', 'Anthropic', 'Claude AI', 'Microsoft AI', 'Meta AI', 
+  'Midjourney', 'Apple', 'Google Pixel', 'Xbox', 'Microsoft 365',
+  'Microsoft Windows'  // Added Xbox, Microsoft 365, and Windows
+];
+
+// Update brand mapping to include the specific Instagram accounts
 const brandMapping: Record<string, string> = {
-  // Official accounts - exact matches
+  // Microsoft ecosystem
+  'xbox': 'Xbox',
+  'microsoft365': 'Microsoft 365',
+  'microsoftai': 'Microsoft AI',
+  'microsoft_ai': 'Microsoft AI',
+  'windows': 'Microsoft Windows',
+  
+  // Apple ecosystem
+  'apple': 'Apple',
+  'applefitnessplus': 'Apple',
+  'applenews': 'Apple',
+  'iphone': 'Apple',
+  'ipad': 'Apple',
+  'macbook': 'Apple',
+  'applesupport': 'Apple',
+  
+  // Google ecosystem
+  'googlepixel': 'Google Pixel',
+  'teampixel': 'Google Pixel',
+  'pixel8': 'Google Pixel',
+  'pixel8pro': 'Google Pixel',
+  'pixelfold': 'Google Pixel',
+  'madebygoogle': 'Google Pixel',
+  
+  // Existing mappings...
   'adidas': 'Adidas',
   'nike': 'Nike',
   'lululemon': 'Lululemon',
   'google': 'Google',
   'googlefordevs': 'Google Developers',
   'googleartculture': 'Google',
-  'madebygoogle': 'Google',
   
-  // AI Companies - Official accounts
+  // AI Companies
   'openai': 'OpenAI',
   'anthropic': 'Anthropic',
   'claudeai': 'Claude AI',
   'midjourney': 'Midjourney',
-  'microsoftai': 'Microsoft AI',
-  'microsoft_ai': 'Microsoft AI',
   'meta_ai': 'Meta AI',
-  'metaai': 'Meta AI',
-  
-  // AI Hashtags and Keywords
-  'gpt4': 'OpenAI',
-  'gpt4o': 'OpenAI',
-  'chatgpt': 'OpenAI',
-  'dall_e': 'OpenAI',
-  'dalle': 'OpenAI',
-  'dalle3': 'OpenAI',
-  'anthropicai': 'Anthropic',
-  'claudesonnet': 'Claude AI',
-  'claude3': 'Claude AI',
-  'midjourneyai': 'Midjourney',
-  'microsoftcopilot': 'Microsoft AI',
-  'copilot': 'Microsoft AI',
-  'llamaai': 'Meta AI',
-  'metaairesearch': 'Meta AI',
-  
-  // Adidas variations for hashtags/mentions
-  'adidasoriginals': 'Adidas',
-  'adidassportswear': 'Adidas',
-  'adidasrunning': 'Adidas',
-  'adidasfootball': 'Adidas',
-  'adidastraining': 'Adidas',
-  'adidasbasketball': 'Adidas',
-  'adidasterrex': 'Adidas',
-  'adidastennis': 'Adidas',
-  'adidaswomen': 'Adidas',
-  'adidasmen': 'Adidas',
-  'createdwithadidas': 'Adidas',
-  'adidasvibes': 'Adidas',
-  'adidasparis': 'Adidas',
-  'adidasberlin': 'Adidas',
-  'yesadidas': 'Adidas',
-  
-  // Nike variations
-  'nikesportswear': 'Nike',
-  'nikerunning': 'Nike',
-  'nikefootball': 'Nike',
-  'nikebasketball': 'Nike',
-  'nikesb': 'Nike',
-  'niketraining': 'Nike',
-  'nikewomen': 'Nike',
-  'nikemen': 'Nike',
-  'justdoit': 'Nike',
-  
-  // Lululemon variations
-  'lululemonmen': 'Lululemon',
-  'lululemonathletics': 'Lululemon',
-  
-  // Google variations
-  'googlestore': 'Google',
-  'googlepixel': 'Google',
-  'googlecloud': 'Google Developers',
-  'googleai': 'Google',
-  'googlearts': 'Google'
+  'metaai': 'Meta AI'
 };
 
 /**
@@ -274,9 +248,6 @@ export const transformApifyData = async (data: any[]): Promise<IPost[]> => {
   let skippedByAge = 0;
   let skippedByNoImage = 0;
   let processed = 0;
-  
-  // Update the target brands array to include AI companies
-  const targetBrands = ['Adidas', 'Nike', 'Lululemon', 'Google', 'Google Developers', 'OpenAI', 'Anthropic', 'Claude AI', 'Microsoft AI', 'Meta AI', 'Midjourney'];
   
   // Statistics counters for debugging
   let statsTotal = data.length;
