@@ -1,17 +1,5 @@
 import { NextResponse } from 'next/server';
 import { updatePostsFromApify } from '../../../src/utils/apifyFetcher';
-import fs from 'fs';
-import path from 'path';
-import { IPost } from '../../../src/mocks/mockPostData';
-
-// Define path for data file - make Vercel compatible
-const DATA_FILE_PATH = path.join(
-  process.env.NODE_ENV === 'production' ? '/tmp' : process.cwd(), 
-  'public/data/posts.json'
-);
-
-// Define a maximum age for posts (in milliseconds)
-const MAX_POST_AGE_MS = 3 * 30 * 24 * 60 * 60 * 1000; // About 3 months
 
 /**
  * API endpoint to refresh the feed with posts from official brand accounts

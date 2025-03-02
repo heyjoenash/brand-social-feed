@@ -228,3 +228,38 @@ export const updatePostsFromApify = async (options?: { force?: boolean }) => {
     return { success: false, message: String(error) };
   }
 };
+
+/**
+ * Start an Apify actor run
+ * @param actorId ID of the actor to run
+ * @param input Input data for the actor run
+ * @returns ID of the started run
+ */
+export const startActorRun = async (actorId: string, input: Record<string, unknown>) => {
+  try {
+    if (!API_TOKEN) {
+      throw new Error('API_TOKEN is not defined');
+    }
+
+    const response = await axios.post(
+      `https://api.apify.com/v2/acts/${actorId}/runs`,
+      { input },
+      {
+        headers: {
+          'Authorization': `Bearer ${API_TOKEN}`,
+          'Content-Type': 'application/json'
+        }
+      }
+    );
+
+    if (response.data && response.data.data && response.data.data.id) {
+      console.log(`Started actor run: ${response.data.data.id}`);
+      return response.data.data.id;
+    } else {
+      throw new Error('Failed to start actor run: Invalid response');
+    }
+  } catch (error) {
+    console.error('Error starting actor run:', error);
+    throw error;
+  }
+};
