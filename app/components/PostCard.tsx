@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { IPost } from '@/src/mocks/mockPostData';
 import Image from 'next/image';
 import { formatDistanceToNow } from 'date-fns';
@@ -8,6 +8,9 @@ interface PostCardProps {
 }
 
 export const PostCard = ({ post }: PostCardProps) => {
+  // State to track if Next.js Image fails
+  const [imageError, setImageError] = useState(false);
+  
   // Format timestamp to a readable format
   const timeAgo = formatDistanceToNow(new Date(post.timestamp), { addSuffix: true });
   
@@ -29,14 +32,24 @@ export const PostCard = ({ post }: PostCardProps) => {
       
       {/* Post Image */}
       <div className="relative aspect-square w-full">
-        <Image 
-          src={post.imageUrl} 
-          alt={`${post.brand} post`}
-          fill
-          style={{ objectFit: 'cover' }}
-          sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-          priority={true}
-        />
+        {!imageError ? (
+          <Image 
+            src={post.imageUrl} 
+            alt={`${post.brand} post`}
+            fill
+            style={{ objectFit: 'cover' }}
+            sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+            priority={true}
+            onError={() => setImageError(true)}
+          />
+        ) : (
+          // Fallback to regular img tag if Next.js Image fails
+          <img
+            src={post.imageUrl}
+            alt={`${post.brand} post`}
+            style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+          />
+        )}
       </div>
       
       {/* Post Caption */}
