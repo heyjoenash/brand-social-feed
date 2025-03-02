@@ -8,8 +8,11 @@ const API_TOKEN = process.env.APIFY_API_TOKEN;
 const DATASET_ID = process.env.APIFY_DATASET_ID;
 const TASK_ID = process.env.APIFY_TASK_ID;
 
-// File to store the last processed run information
-const LAST_RUN_FILE = path.join(process.cwd(), 'public/data/last_run.json');
+// File to store the last processed run information - make Vercel compatible
+const LAST_RUN_FILE = path.join(
+  process.env.NODE_ENV === 'production' ? '/tmp' : process.cwd(), 
+  'public/data/last_run.json'
+);
 
 /**
  * Save information about the last processed run

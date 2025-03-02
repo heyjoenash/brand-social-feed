@@ -2,7 +2,11 @@ import fs from 'fs';
 import path from 'path';
 import { IPost } from '../mocks/mockPostData';
 
-const DATA_FILE_PATH = path.join(process.cwd(), 'public/data/posts.json');
+// Make file paths Vercel-compatible by using /tmp in production
+const DATA_FILE_PATH = path.join(
+  process.env.NODE_ENV === 'production' ? '/tmp' : process.cwd(), 
+  'public/data/posts.json'
+);
 
 // Define a maximum age for posts (in milliseconds)
 const MAX_POST_AGE_MS = 2 * 365 * 24 * 60 * 60 * 1000; // About 2 years
