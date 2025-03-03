@@ -31,12 +31,12 @@ if (configErrors.length > 0) {
  * Checks if a post is a mock post
  */
 const isMockPost = (post: IPost): boolean => {
-  // Identify mock posts by ID pattern or image URL
+  // Identify mock posts by ID pattern or media URL
   const mockPostPatterns = ['google-1', 'microsoft-1', 'apple-1', 'amazon-1', 'nike-1'];
   
   return (
     mockPostPatterns.includes(post.id) || 
-    (post.imageUrl && post.imageUrl.includes('picsum.photos') ? true : false)
+    (post.mediaUrl && post.mediaUrl.includes('picsum.photos') ? true : false)
   );
 };
 
@@ -338,11 +338,13 @@ export const transformApifyData = async (data: any[]): Promise<IPost[]> => {
               id: uniqueId,
               brand: detectedBrand,
               source: 'instagram',
-              postId: postId,
-              imageUrl,
+              mediaType: post.isVideo ? 'VIDEO' : 'IMAGE',
+              mediaUrl: post.displayUrl || post.videoUrl || '',
+              thumbnailUrl: post.thumbnailUrl || post.displayUrl || '',
               caption,
               timestamp,
-              url: post.url || `https://www.instagram.com/p/${post.shortCode}/`
+              url: post.url || `https://www.instagram.com/p/${post.shortCode}/`,
+              aspectRatio: post.dimensions ? post.dimensions.height / post.dimensions.width : 1
             };
             
             statsTransformed++;
@@ -496,21 +498,23 @@ export const transformApifyData = async (data: any[]): Promise<IPost[]> => {
                      (item.shortCode ? `https://www.instagram.com/p/${item.shortCode}/` : '') ||
                      (item.code ? `https://www.instagram.com/p/${item.code}/` : '');
           
-          // Return a valid IPost object
-          const post = {
+          // Create post object
+          const transformedPost: IPost = {
             id: uniqueId,
             brand: detectedBrand,
             source: 'instagram',
-            postId: id,
-            imageUrl,
+            mediaType: item.isVideo ? 'VIDEO' : 'IMAGE',
+            mediaUrl: item.displayUrl || item.videoUrl || '',
+            thumbnailUrl: item.thumbnailUrl || item.displayUrl || '',
             caption,
             timestamp,
-            url
-          } as IPost;
+            url,
+            aspectRatio: item.dimensions ? item.dimensions.height / item.dimensions.width : 1
+          };
           
           statsTransformed++;
-          console.log('Successfully transformed post:', post.brand, post.id);
-          return post;
+          console.log('Successfully transformed post:', transformedPost.brand, transformedPost.id);
+          return transformedPost;
         }
       } catch (error) {
         console.error('Error transforming post:', error);
