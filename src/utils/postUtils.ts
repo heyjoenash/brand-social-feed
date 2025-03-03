@@ -1,6 +1,12 @@
 import fs from 'fs';
 import path from 'path';
 import { IPost } from '../mocks/mockPostData';
+import { 
+  targetBrands, 
+  officialAccounts, 
+  generateBrandMapping,
+  validateBrandConfig 
+} from '../config/brandConfig';
 
 // Make file paths Vercel-compatible by using /tmp in production
 const DATA_FILE_PATH = path.join(
@@ -11,23 +17,15 @@ const DATA_FILE_PATH = path.join(
 // Define a maximum age for posts (in milliseconds)
 const MAX_POST_AGE_MS = 2 * 365 * 24 * 60 * 60 * 1000; // About 2 years
 
-// List of official brand accounts for exact matching
-const officialAccounts = [
-  'adidas',
-  'nike',
-  'lululemon',
-  'google',
-  'googlefordevs',
-  'googleartculture',
-  'madebygoogle',
-  'openai',
-  'anthropic',
-  'claudeai',
-  'midjourney',
-  'microsoftai',
-  'microsoft_ai',
-  'meta_ai'
-];
+// Get brand mapping from configuration
+const brandMapping = generateBrandMapping();
+
+// Validate brand configuration on startup
+const configErrors = validateBrandConfig();
+if (configErrors.length > 0) {
+  console.error('Brand configuration errors found:');
+  configErrors.forEach(error => console.error(`- ${error}`));
+}
 
 /**
  * Checks if a post is a mock post
@@ -107,57 +105,6 @@ export const addPosts = (newPosts: IPost[]): void => {
   } else {
     console.log('No new unique posts to add');
   }
-};
-
-// Update target brands to include all the brands we want to show
-const targetBrands = [
-  'Adidas', 'Nike', 'Lululemon', 'Google', 'Google Developers', 
-  'OpenAI', 'Anthropic', 'Claude AI', 'Microsoft AI', 'Meta AI', 
-  'Midjourney', 'Apple', 'Google Pixel', 'Xbox', 'Microsoft 365',
-  'Microsoft Windows'  // Added Xbox, Microsoft 365, and Windows
-];
-
-// Update brand mapping to include the specific Instagram accounts
-const brandMapping: Record<string, string> = {
-  // Microsoft ecosystem
-  'xbox': 'Xbox',
-  'microsoft365': 'Microsoft 365',
-  'microsoftai': 'Microsoft AI',
-  'microsoft_ai': 'Microsoft AI',
-  'windows': 'Microsoft Windows',
-  
-  // Apple ecosystem
-  'apple': 'Apple',
-  'applefitnessplus': 'Apple',
-  'applenews': 'Apple',
-  'iphone': 'Apple',
-  'ipad': 'Apple',
-  'macbook': 'Apple',
-  'applesupport': 'Apple',
-  
-  // Google ecosystem
-  'googlepixel': 'Google Pixel',
-  'teampixel': 'Google Pixel',
-  'pixel8': 'Google Pixel',
-  'pixel8pro': 'Google Pixel',
-  'pixelfold': 'Google Pixel',
-  'madebygoogle': 'Google Pixel',
-  
-  // Existing mappings...
-  'adidas': 'Adidas',
-  'nike': 'Nike',
-  'lululemon': 'Lululemon',
-  'google': 'Google',
-  'googlefordevs': 'Google Developers',
-  'googleartculture': 'Google',
-  
-  // AI Companies
-  'openai': 'OpenAI',
-  'anthropic': 'Anthropic',
-  'claudeai': 'Claude AI',
-  'midjourney': 'Midjourney',
-  'meta_ai': 'Meta AI',
-  'metaai': 'Meta AI'
 };
 
 /**

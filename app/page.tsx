@@ -5,6 +5,7 @@ import { IPost } from '../src/mocks/mockPostData';
 import { PostCard } from './components/PostCard';
 import { BrandFilter } from './components/BrandFilter';
 import RefreshButton from './components/RefreshButton';
+import { getParentBrand } from '../src/config/brandConfig';
 
 export default function Feed() {
   const [posts, setPosts] = useState<IPost[]>([]);
@@ -12,12 +13,13 @@ export default function Feed() {
   const [error, setError] = useState<string | null>(null);
   const [selectedBrand, setSelectedBrand] = useState<string | null>(null);
   
-  // Get unique brands from posts
-  const brands = Array.from(new Set(posts.map(post => post.brand))).sort();
-  
   // Filter posts by selected brand
   const filteredPosts = selectedBrand
-    ? posts.filter(post => post.brand === selectedBrand)
+    ? posts.filter(post => {
+        // If selected brand is a parent brand, show all sub-brand posts
+        const postParentBrand = getParentBrand(post.brand);
+        return post.brand === selectedBrand || postParentBrand === selectedBrand;
+      })
     : posts;
     
   // Sort posts by timestamp (newest first)
@@ -96,13 +98,10 @@ export default function Feed() {
         </div>
         
         {/* Brand Filter */}
-        {posts.length > 0 && (
-          <BrandFilter
-            brands={brands}
-            selectedBrand={selectedBrand}
-            onChange={setSelectedBrand}
-          />
-        )}
+        <BrandFilter
+          selectedBrand={selectedBrand}
+          onChange={setSelectedBrand}
+        />
         
         {/* Loading State */}
         {isLoading && (
