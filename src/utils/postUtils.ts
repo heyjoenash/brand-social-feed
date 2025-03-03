@@ -2,10 +2,10 @@ import fs from 'fs';
 import path from 'path';
 import { IPost } from '../mocks/mockPostData';
 import { 
-  targetBrands, 
   officialAccounts, 
   generateBrandMapping,
-  validateBrandConfig 
+  validateBrandConfig,
+  allBrands,
 } from '../config/brandConfig';
 
 // Make file paths Vercel-compatible by using /tmp in production
@@ -297,7 +297,7 @@ export const transformApifyData = async (data: any[]): Promise<IPost[]> => {
             }
             
             // Skip if no brand detected or not in target list
-            if (!detectedBrand || !targetBrands.includes(detectedBrand)) {
+            if (!detectedBrand || !allBrands.includes(detectedBrand)) {
               statsFilteredByBrand++;
               console.log(`Skipping post - no target brand detected. Username: ${username}`);
               continue;
@@ -432,7 +432,7 @@ export const transformApifyData = async (data: any[]): Promise<IPost[]> => {
           }
           
           // Skip if no brand detected or not in target list
-          if (!detectedBrand || !targetBrands.includes(detectedBrand)) {
+          if (!detectedBrand || !allBrands.includes(detectedBrand)) {
             statsFilteredByBrand++;
             console.log(`Skipping post - no target brand detected. Username: ${username}`);
             return null;
